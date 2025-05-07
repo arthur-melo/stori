@@ -1,0 +1,29 @@
+'use client';
+
+import { useEffect } from 'react';
+
+import Screen from '@/components/draws/Screen';
+
+const Error = ({ error }: { error: Error & { digest?: string } }) => {
+  useEffect(() => {
+    console.log(error);
+  }, [error]);
+
+  return (
+    <div className="flex h-full w-full items-center justify-center">
+      <div className="flex flex-col items-end gap-11">
+        <Screen className="h-full max-w-full object-contain" />
+        <div className="flex flex-col items-end gap-4">
+          <p className="text-tertiary-500 dark:text-tertiary-100 text-end text-4xl font-bold">
+            Error loading page
+          </p>
+          <p className="text-tertiary-500 dark:text-tertiary-100 text-end text-2xl font-normal">
+            The requested page could not be loaded.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Error;

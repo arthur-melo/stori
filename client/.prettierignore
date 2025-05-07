@@ -1,0 +1,14 @@
+.prettierignore
+.gitignore
+.next
+.husky
+
+**/*.png
+**/*.xml
+**/*.svg
+**/*.ico
+
+**/__snapshots__
+
+Dockerfile
+.dockerignore

@@ -1,0 +1,131 @@
+name: stori_backend
+
+services:
+  stori_db_dev:
+    container_name: stori_db_dev
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+      - 1433:1433
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=P@ssw0rd123@
+    healthcheck:
+      test: /opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P "$$MSSQL_SA_PASSWORD" -Q "SELECT 1" || exit 1
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+    volumes:
+      - stori_db_data_dev:/var/opt/mssql
+    networks:
+      - stori
+    profiles: [dev]
+
+  stori_backend_dev:
+    container_name: stori_backend_dev
+    image: stori_backend_dev
+    ports:
+      - 8081:8081
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8081
+    volumes:
+      - stori_backend_data_dev:/app/wwwroot/images
+    build:
+      context: src/Server.API
+      target: development
+    restart: unless-stopped
+    depends_on:
+      stori_db_dev:
+        condition: service_healthy
+    networks:
+      - stori
+    profiles: [dev]
+
+  stori_db_prod:
+    container_name: stori_db_prod
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+      - 1433:1433
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=P@ssw0rd123@
+    healthcheck:
+      test: /opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P "$$MSSQL_SA_PASSWORD" -Q "SELECT 1" || exit 1
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+    volumes:
+      - stori_db_data_prod:/var/opt/mssql
+    networks:
+      - stori
+    profiles: [prod,migration]
+
+  stori_backend_prod:
+    container_name: stori_backend_prod
+    image: stori_backend_prod
+    ports:
+      - 8081:8081
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=8081
+    volumes:
+      - stori_backend_data_prod:/app/wwwroot/images
+    build:
+      context: src/Server.API
+      target: final
+    restart: unless-stopped
+    depends_on:
+      stori_db_prod:
+        condition: service_healthy
+    networks:
+      - stori
+    profiles: [prod]
+
+  stori_db_migration:
+    container_name: stori_db_migration
+    image: stori_db_migration
+    build:
+      context: src/Server.API
+      target: migration
+    depends_on:
+      stori_db_prod:
+        condition: service_healthy
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    networks:
+      - stori
+    profiles: [migration]
+
+  stori_backend_test:
+    container_name: stori_backend_test
+    image: stori_backend_test
+    build:
+      context: .
+      target: test
+      dockerfile: src/Server.API/Dockerfile
+    environment:
+      # TESTCONTAINERS_HOST_OVERRIDE is not needed in the case of Docker Engine.
+      - TESTCONTAINERS_HOST_OVERRIDE=host.docker.internal
+      - ASPNETCORE_ENVIRONMENT=Test
+    volumes:
+      - /var/run/docker.sock.raw:/var/run/docker.sock
+      - ./coverage:/src/coverage
+    networks:
+      - stori
+    profiles: [test]
+
+networks:
+  stori:
+    name: stori
+
+volumes:
+  stori_db_data_dev:
+    driver: local
+  stori_backend_data_dev:
+    driver: local
+  stori_db_data_prod:
+    driver: local
+  stori_backend_data_prod:
+    driver: local

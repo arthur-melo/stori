@@ -1,0 +1,37 @@
+{
+  "profiles": {
+    "Docker Compose (Dev)": {
+      "commandName": "DockerCompose",
+      "commandVersion": "1.0",
+      "composeLaunchAction": "LaunchBrowser",
+      "composeLaunchServiceName": "stori_backend_dev",
+      "composeLaunchUrl": "{Scheme}://localhost:{ServicePort}",
+      "composeProfile": {
+        "includes": [
+          "dev"
+        ]
+      }
+    },
+    "Docker Compose (Prod)": {
+      "commandName": "DockerCompose",
+      "commandVersion": "1.0",
+      "composeProfile": {
+        "includes": [
+          "prod"
+        ],
+        "serviceActions": {
+          "stori_backend_prod": "StartWithoutDebugging"
+        }
+      }
+    },
+    "Docker Compose (Migration)": {
+      "commandName": "DockerCompose",
+      "commandVersion": "1.0",
+      "composeProfile": {
+        "includes": [
+          "migration"
+        ]
+      }
+    }
+  }
+}

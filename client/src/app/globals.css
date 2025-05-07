@@ -1,0 +1,91 @@
+@import 'tailwindcss';
+
+/* Custom variants to change from mobile first to desktop-first design. */
+@custom-variant 2xl (@media (max-width: 96rem));
+@custom-variant xl (@media (max-width: 80rem));
+@custom-variant lg (@media (max-width: 64rem));
+@custom-variant md (@media (max-width: 48rem));
+@custom-variant sm (@media (max-width: 40rem));
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-*: initial;
+  --color-black: #111212;
+  --color-white: #fff;
+
+  --color-primary-300: #718dea;
+  --color-primary-400: #456ae3;
+  --color-primary-500: #204bd7;
+  --color-primary-600: #193ba9;
+  --color-primary-700: #132b7c;
+
+  --color-secondary-300: #ec8c6e;
+  --color-secondary-400: #e66841;
+  --color-secondary-500: #d7471c;
+  --color-secondary-600: #ac3916;
+  --color-secondary-700: #7e2a10;
+
+  --color-tertiary-100: #f2f2fd;
+  --color-tertiary-200: #8688e9;
+  --color-tertiary-300: #3033d9;
+  --color-tertiary-400: #191b8a;
+  --color-tertiary-500: #0a0a35;
+
+  --color-neutral-100: #ffffff;
+  --color-neutral-200: #f2f2f2;
+  --color-neutral-300: #b3b3b3;
+  --color-neutral-400: #808080;
+  --color-neutral-500: #4d4d4d;
+
+  --color-danger-300: #f46c6c;
+  --color-danger-400: #f13c3c;
+  --color-danger-500: #eb1111;
+  --color-danger-600: #b90d0d;
+  --color-danger-700: #8a0a0a;
+  --color-danger-800: #5a0707;
+  --color-danger-900: #2b0303;
+
+  --color-success: #12ed20;
+  --color-warning: #edc112;
+  --color-error: #eb1111;
+  --color-informational: #204bd7;
+
+  --font-sans: var(--font_family_sans), sans;
+  --font-serif: var(--font_family_serif), serif;
+
+  --aspect-1\/1_5: 1 / 1.5;
+
+  /* Breakpoints need to be reseted in order for the desktop-first design approach to work. */
+  --breakpoint-*: initial;
+  --screen-2xl: 96rem;
+}
+
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+}
+
+@layer base {
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+:root {
+  --toastify-color-error: var(--color-error);
+}
